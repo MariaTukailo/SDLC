@@ -1,0 +1,84 @@
+@startuml
+
+package "main" {
+  class Main
+}
+
+package "main.controller" <<Controller>> {
+  class MainController {
+    - model: DateBirth
+    - view: MainForm
+    + MainController(model: DateBirth, view: MainForm)
+    - onInputDate()
+  }
+}
+
+package "main.model" <<Model>> {
+  class DateBirth {
+    - day: int
+    - month: int
+    - year: int
+    + DateBirth()
+    + DateBirth(day, month, year)
+    + setDate(day, month, year)
+    + getDay(): int
+    + getMonth(): int
+    + getYear(): int
+    + getDayOfWeek(): int
+    + isValid(): boolean
+    + addChangeListener(listener)
+  }
+
+  class Fate {
+    - id: int
+    - description: String
+    + getId(): int
+    + getDescription(): String
+  }
+
+  class FateRepository {
+    - {static} ALL: List<Fate>
+    + {static} findById(id: int): Fate
+  }
+}
+
+package "main.view" <<View>> {
+  class MainForm {
+    + MainForm(model: DateBirth)
+    + addInputDateListener(listener)
+    + showResult(text: String)
+    + showError(message: String)
+  }
+
+  class DateInputDialog {
+    + DateInputDialog(parent: JFrame)
+    + setValues(day, month, year)
+    + isConfirmed(): boolean
+    + getDayText(): String
+    + getMonthText(): String
+    + getYearText(): String
+    + resetConfirmed()
+  }
+
+  class RoundedPanel {
+    - radius: int
+    + RoundedPanel(radius: int)
+  }
+}
+
+Main --> DateBirth : creates
+Main --> MainForm : creates
+Main --> MainController : creates
+
+MainController --> DateBirth : uses
+MainController --> MainForm : uses
+MainController --> DateInputDialog : creates
+
+MainForm --> DateBirth : uses
+MainForm --> Fate : uses
+MainForm --> FateRepository : calls
+MainForm ..> RoundedPanel : creates
+
+FateRepository --> Fate : creates
+
+@enduml
